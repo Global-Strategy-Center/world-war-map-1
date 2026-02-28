@@ -2,7 +2,7 @@
 <html lang="ka">
 <head>
     <meta charset="UTF-8">
-    <title>Global Frontline Monitor - Full Dataset</title>
+    <title>Global Command - Absolute Dataset</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         body { margin: 0; font-family: 'Segoe UI', Tahoma, sans-serif; display: flex; height: 100vh; background: #050505; color: #00ff00; overflow: hidden; }
@@ -13,19 +13,15 @@
         .status-tag { display: inline-block; padding: 2px 7px; background: #ff4444; color: #000; font-weight: bold; font-size: 0.7em; border-radius: 3px; margin-bottom: 10px; }
         .news-container { flex-grow: 1; border: 1px solid #333; border-radius: 6px; background: #000; min-height: 400px; overflow: hidden; }
         iframe { width: 100%; height: 100%; border: none; background: #000; }
-        b { color: #ffaa00; }
         .label-style { background: rgba(0,0,0,0.85); border: 1px solid #ff4444; color: #fff; padding: 1px 3px; font-size: 8px; border-radius: 2px; pointer-events: none; white-space: nowrap; }
     </style>
 </head>
 <body>
 
     <div id="map"></div>
-    
     <div id="info-panel">
-        <h2>🛰️ სრული მონიტორინგი</h2>
-        <div id="details">
-            <p style="color: #888; font-size: 0.85em;">აირჩიეთ ნებისმიერი წერტილი რუკაზე.</p>
-        </div>
+        <h2>🛰️ აბსოლუტური მონიტორინგი</h2>
+        <div id="details"><p style="color: #888; font-size: 0.85em;">მზადყოფნა 100%. აირჩიეთ ნებისმიერი ვექტორი.</p></div>
         <div id="news-section" class="news-container" style="display:none;">
             <div id="news-frame-wrapper" style="height: 100%;"></div>
         </div>
@@ -40,59 +36,51 @@
 
         const data = [
             // ევროპა & კავკასია
-            { from: "რუსეთი", to: "უკრაინა", path: [[55.7, 37.6], [50.4, 30.5]], q: "Ukraine war latest", status: "აქტიური ომი", analysis: "ფართომასშტაბიანი იმპერიული აგრესია." },
-            { from: "რუსეთი", to: "საქართველო", path: [[43.5, 39.5], [42.5, 41.5]], q: "Georgia Russia occupation news", status: "ოკუპაცია", analysis: "აფხაზეთისა და ცხინვალის რეგიონების ანექსიური პროცესი." },
-            { from: "აზერბაიჯანი", to: "სომხეთი", path: [[40.4, 49.8], [40.1, 44.5]], q: "Armenia Azerbaijan border", status: "მშვიდობის პროცესი", analysis: "ომისშემდგომი დელიმიტაცია და ზანგეზურის დერეფანი." },
-            { from: "სერბეთი", to: "კოსოვო", path: [[44.8, 20.4], [42.6, 21.1]], q: "Kosovo Serbia tension", status: "დაძაბულობა", analysis: "ბალკანეთის ეთნიკური და პოლიტიკური კრიზისი." },
+            { from: "რუსეთი", to: "უკრაინა", path: [[55.7, 37.6], [50.4, 30.5]], q: "Ukraine war latest", status: "აქტიური ომი", analysis: "ფართომასშტაბიანი აგრესია." },
+            { from: "რუსეთი", to: "საქართველო", path: [[43.5, 39.5], [42.5, 41.5]], q: "Georgia Russia occupied regions", status: "ოკუპაცია", analysis: "აფხაზეთისა და ცხინვალის ოკუპაცია." },
+            { from: "აზერბაიჯანი", to: "სომხეთი", path: [[40.4, 49.8], [40.1, 44.5]], q: "Armenia Azerbaijan border news", status: "პოსტ-კონფლიქტი", analysis: "ზანგეზურის დერეფანი და მშვიდობა." },
+            { from: "სერბეთი", to: "კოსოვო", path: [[44.8, 20.4], [42.6, 21.1]], q: "Kosovo Serbia tension", status: "დაძაბულობა", analysis: "ეთნიკური კრიზისი ბალკანეთში." },
+            { from: "თურქეთი", to: "კვიპროსი", path: [[39.9, 32.8], [35.1, 33.3]], q: "Cyprus dispute news", status: "გაყოფილი კუნძული", analysis: "ჩრდილოეთ კვიპროსის არაღიარებული რესპუბლიკის საკითხი." },
 
-            // ახლო აღმოსავლეთი & აზია
-            { from: "ირანი", to: "ისრაელი", path: [[32.6, 51.6], [31.7, 35.2]], q: "Israel Iran war updates", status: "ესკალაცია", analysis: "პირდაპირი სარაკეტო და პროქსი დაპირისპირება." },
-            { from: "კასპიის 5-ეული", to: "კასპია", path: [[40.0, 51.0], [42.0, 50.0]], q: "Caspian Sea energy dispute", status: "რესურსების დავა", analysis: "ენერგო-მარშრუტებისა და ზღვის დაყოფის დავა." },
-            { from: "ჩინეთი", to: "ტაივანი", path: [[26.0, 119.3], [25.0, 121.5]], q: "Taiwan China news live", status: "ბლოკადა", analysis: "ტერიტორიული პრეტენზია და აშშ-ის შეკავება." },
-            { from: "პაკისტანი", to: "ინდოეთი", path: [[33.6, 73.0], [34.0, 74.8]], q: "Kashmir India Pakistan news", status: "ბირთვული დავა", analysis: "ათწლეულების კონფლიქტი ქაშმირის გამო." },
-            { from: "ხუნტა", to: "მიანმარი", path: [[19.7, 96.1], [22.0, 95.0]], q: "Myanmar civil war live", status: "სამოქალაქო ომი", analysis: "ბრძოლა დემოკრატიისთვის სამხედრო რეჟიმის წინააღმდეგ." },
-            { from: "ყირგიზეთი", to: "ტაჯიკეთი", path: [[42.8, 74.5], [38.5, 68.7]], q: "Kyrgyzstan Tajikistan border", status: "სასაზღვრო დავა", analysis: "წყლისა და მიწის რესურსების გადანაწილება." },
+            // ახლო აღმოსავლეთი
+            { from: "ირანი", to: "ისრაელი", path: [[32.6, 51.6], [31.7, 35.2]], q: "Israel Iran conflict", status: "ესკალაცია", analysis: "პირდაპირი დაპირისპირება." },
+            { from: "იემენი", to: "წითელი ზღვა", path: [[15.3, 44.2], [14.6, 42.1]], q: "Houthi Red Sea attacks", status: "ბლოკადა", analysis: "ჰუსიტების თავდასხმები გემებზე." },
+            { from: "თურქეთი", to: "სირია/PKK", path: [[37.0, 35.3], [36.5, 38.0]], q: "Turkey Syria operations", status: "სამხედრო ოპერაცია", analysis: "ქურთული ფორმირებების წინააღმდეგ ბრძოლა." },
+            { from: "ლიბია", to: "ტრიპოლი", path: [[32.8, 13.1], [32.0, 20.0]], q: "Libya conflict news", status: "შიდა დავა", analysis: "ორხელისუფლებიანობა და ნავთობი." },
 
-            // აფრიკა
-            { from: "სუდანის SAF", to: "RSF", path: [[15.5, 32.5], [14.0, 25.0]], q: "Sudan conflict news", status: "სამოქალაქო ომი", analysis: "შიდა ომი რესურსებისა და ძალაუფლებისთვის." },
-            { from: "ისლამისტები", to: "საჰელი", path: [[14.5, -0.3], [12.0, 15.0]], q: "Sahel terrorism updates", status: "ტერორიზმი", analysis: "ISIS და ალ-ქაიდას ექსპანსია აფრიკაში." },
-            { from: "M23", to: "კონგო", path: [[-1.9, 29.6], [-1.5, 29.2]], q: "DRC Congo M23 news", status: "რესურსების ომი", analysis: "იშვიათი მინერალების კონტროლისთვის ბრძოლა." },
-            { from: "ეთიოპია", to: "ამბოხებულები", path: [[9.0, 38.7], [11.5, 37.5]], q: "Ethiopia Fano conflict", status: "შიდა კრიზისი", analysis: "ეთნიკური და ფედერალური დაპირისპირება." },
+            // აზია
+            { from: "ჩინეთი", to: "ტაივანი", path: [[26.0, 119.3], [25.0, 121.5]], q: "Taiwan news live", status: "ბლოკადა", analysis: "ტერიტორიული პრეტენზია." },
+            { from: "ჩრდ. კორეა", to: "სამხ. კორეა", path: [[39.0, 125.7], [37.5, 127.0]], q: "North Korea missile news", status: "ბირთვული საფრთხე", analysis: "38-ე პარალელი და ბირთვული პროგრამა." },
+            { from: "იაპონია", to: "კურილის კუნძ.", path: [[35.6, 139.6], [44.0, 146.0]], q: "Kuril Islands dispute", status: "ტერიტორიული დავა", analysis: "მეორე მსოფლიო ომის შემდგომი დავა რუსეთთან." },
+            { from: "პაკისტანი", to: "ინდოეთი", path: [[33.6, 73.0], [34.0, 74.8]], q: "Kashmir conflict", status: "ბირთვული შეკავება", analysis: "ქაშმირის დავა." },
+            { from: "ხუნტა", to: "მიანმარი", path: [[19.7, 96.1], [22.0, 95.0]], q: "Myanmar war live", status: "სამოქალაქო ომი", analysis: "ბრძოლა ხუნტის წინააღმდეგ." },
 
-            // სამხრეთ ამერიკა
-            { from: "ვენესუელა", to: "გაიანა", path: [[7.5, -66.5], [6.8, -59.5]], q: "Guyana Venezuela Essequibo news", status: "ანექსიის საფრთხე", analysis: "ნავთობით მდიდარი ესეკიბოს რეგიონის დავა." },
-            { from: "კარტელები", to: "ეკვადორი", path: [[-0.1, -78.4], [-2.1, -79.9]], q: "Ecuador cartel war news", status: "შიდა ომი", analysis: "სახელმწიფოს ბრძოლა ნარკო-ტერორიზმთან." },
-            { from: "კოლუმბია", to: "ELN/FARC", path: [[4.7, -74.0], [7.0, -73.0]], q: "Colombia ELN conflict", status: "პარტიზანული ომი", analysis: "ნარკო-ტრაფიკი და იდეოლოგიური ომი." }
+            // აფრიკა & ამერიკა
+            { from: "სუდანი", to: "ხარტუმი", path: [[15.5, 32.5], [14.0, 25.0]], q: "Sudan civil war news", status: "სამოქალაქო ომი", analysis: "ბრძოლა ძალაუფლებისთვის." },
+            { from: "M23", to: "კონგო", path: [[-1.9, 29.6], [-1.5, 29.2]], q: "DRC Congo war", status: "რესურსების ომი", analysis: "იშვიათი ლითონები." },
+            { from: "ბანდები", to: "ჰაიტი", path: [[18.5, -72.3], [19.0, -72.5]], q: "Haiti gang violence", status: "ქაოსი", analysis: "სახელმწიფო კონტროლის დაკარგვა." },
+            { from: "ვენესუელა", to: "გაიანა", path: [[7.5, -66.5], [6.8, -59.5]], q: "Essequibo dispute", status: "ანექსიის მუქარა", analysis: "ნავთობის საბადოები." },
+            { from: "კასპია", to: "რესურსები", path: [[40.0, 51.0], [42.0, 50.0]], q: "Caspian Sea oil gas news", status: "ენერგო დავა", analysis: "გაზსადენების ბლოკირება." }
         ];
 
         function loadNews(query) {
             const wrapper = document.getElementById('news-frame-wrapper');
             document.getElementById('news-section').style.display = 'block';
-            const newsUrl = `https://www.bing.com/news/search?q=${encodeURIComponent(query)}&qft=sortbydate%3d%221%22&form=NWRFSH`;
-            wrapper.innerHTML = `<iframe src="${newsUrl}"></iframe>`;
+            wrapper.innerHTML = `<iframe src="https://www.bing.com/news/search?q=${encodeURIComponent(query)}&qft=sortbydate%3d%221%22&form=NWRFSH"></iframe>`;
         }
 
         data.forEach(s => {
             const color = '#ff4444';
             var line = L.polyline(s.path, {color: color, weight: 3, opacity: 0.8, dashArray: '5, 5'}).addTo(map);
             var ghost = L.polyline(s.path, {color: 'transparent', weight: 20, cursor: 'pointer'}).addTo(map);
-
-            L.polylineDecorator(line, {
-                patterns: [{offset: '100%', symbol: L.Symbol.arrowHead({pixelSize: 12, pathOptions: {color: color, fillOpacity: 1}})}]
-            }).addTo(map);
+            L.polylineDecorator(line, { patterns: [{offset: '100%', symbol: L.Symbol.arrowHead({pixelSize: 12, pathOptions: {color: color, fillOpacity: 1}})}] }).addTo(map);
 
             const action = () => {
-                document.getElementById('details').innerHTML = `
-                    <div class="strike-card">
-                        <div class="status-tag">${s.status}</div>
-                        <h3 style="color:#ff4444;margin:0;">${s.from} ➔ ${s.to}</h3>
-                        <p style="font-size:0.85em; margin-top:8px;">${s.analysis}</p>
-                    </div>`;
+                document.getElementById('details').innerHTML = `<div class="strike-card"><div class="status-tag">${s.status}</div><h3 style="color:#ff4444;margin:0;">${s.from} ➔ ${s.to}</h3><p style="font-size:0.85em; margin-top:8px;">${s.analysis}</p></div>`;
                 loadNews(s.q);
             };
 
-            line.on('click', action);
-            ghost.on('click', action);
+            line.on('click', action); ghost.on('click', action);
             L.marker(s.path[0], {icon: L.divIcon({className: 'label-style', html: s.from})}).addTo(map);
         });
     </script>
