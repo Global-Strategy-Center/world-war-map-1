@@ -2,7 +2,7 @@
 <html lang="ka">
 <head>
     <meta charset="UTF-8">
-    <title>Global Strategic Monitor - 2026</title>
+    <title>Global Strategic Monitor - 2026 Ultimate</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         body { margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; display: flex; height: 100vh; background: #000; overflow: hidden; }
@@ -11,38 +11,42 @@
         #resizer:hover { background: #ffaa00; }
         #info-panel { width: 400px; min-width: 300px; max-width: 900px; height: 100%; background: #050505; display: flex; flex-direction: column; padding: 15px; box-sizing: border-box; overflow-y: auto; z-index: 2000; }
         
-        /* 📊 სტატისტიკის პანელი */
-        #stat-overlay { position: absolute; top: 10px; left: 50px; background: rgba(0,0,0,0.85); border: 1px solid #ff4444; padding: 10px; color: #fff; z-index: 1000; border-radius: 4px; font-size: 0.8em; line-height: 1.4; box-shadow: 0 0 15px rgba(255,0,0,0.3); pointer-events: none; }
-        .stat-val { color: #ff4444; font-weight: bold; }
+        /* 📊 ლეგენდა და სტატისტიკა */
+        #stat-overlay { position: absolute; top: 10px; left: 50px; background: rgba(0,0,0,0.9); border: 1px solid #444; padding: 12px; color: #fff; z-index: 1000; border-radius: 4px; font-size: 0.85em; }
+        .legend-item { display: flex; align-items: center; margin-bottom: 5px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; }
+        .red { background: #ff0000; box-shadow: 0 0 8px #ff0000; }
+        .orange { background: #ffa500; box-shadow: 0 0 8px #ffa500; }
+        .blue { background: #00ccff; box-shadow: 0 0 8px #00ccff; }
+        .purple { background: #cc00ff; box-shadow: 0 0 8px #cc00ff; }
 
         h2 { color: #ffaa00; text-align: center; font-size: 1.1em; border-bottom: 2px solid #ffaa00; padding-bottom: 10px; margin: 0 0 15px 0; text-transform: uppercase; }
         .clock-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 15px; }
         .clock-box { background: #111; padding: 6px; border: 1px solid #333; text-align: center; }
         .clock-time { font-family: 'Courier New', monospace; color: #fff; font-size: 0.85em; }
 
-        .war-pulse { width: 14px; height: 14px; background: #ff0000; border-radius: 50%; box-shadow: 0 0 15px #ff0000; animation: flash 1.2s infinite; }
-        @keyframes flash { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(1.6); } 100% { opacity: 1; transform: scale(1); } }
-
-        .flow-line { stroke-dasharray: 12, 18; animation: flow 20s linear infinite; }
-        .aid-line { stroke-dasharray: 6, 12; animation: flow 35s linear reverse infinite; filter: drop-shadow(0 0 5px #ffaa00); }
+        /* 💫 ანიმაციები ფერების მიხედვით */
+        .pulse-red { animation: flash-red 1.2s infinite; }
+        @keyframes flash-red { 0% { opacity: 1; scale: 1; } 50% { opacity: 0.3; scale: 1.5; } 100% { opacity: 1; scale: 1; } }
+        
+        .flow-line { stroke-dasharray: 10, 15; animation: flow 20s linear infinite; }
+        .aid-line { stroke-dasharray: 5, 12; animation: flow 30s linear reverse infinite; opacity: 0.5; }
         @keyframes flow { from { stroke-dashoffset: 600; } to { stroke-dashoffset: 0; } }
 
-        .strike-card { background: #0d0d0d; border-left: 5px solid #ff4444; padding: 12px; margin-bottom: 12px; border: 1px solid #333; }
-        .aid-card { border-left-color: #ffaa00 !important; border-color: #443300 !important; }
-        
+        .strike-card { background: #0d0d0d; padding: 12px; margin-bottom: 12px; border: 1px solid #333; border-left-width: 6px; }
         .news-container { flex-grow: 1; background: #000; border: 1px solid #333; min-height: 300px; margin-top: 10px; }
         iframe { width: 100%; height: 100%; border: none; }
-        .label-style { color: #fff; background: rgba(0,0,0,0.85); border: 1px solid #555; font-size: 9px; padding: 2px 4px; border-radius: 3px; font-weight: bold; }
+        .label-style { color: #fff; background: rgba(0,0,0,0.8); border: 1px solid #444; font-size: 8px; padding: 1px 3px; pointer-events: none; }
     </style>
 </head>
 <body>
 
     <div id="stat-overlay">
-        <strong>GLOBAL CONFLICT STATUS 2026</strong><br>
-        აქტიური ომები: <span class="stat-val">56</span><br>
-        ლოკალური შეტაკებები: <span class="stat-val">114</span><br>
-        გაყინული კონფლიქტები: <span class="stat-val">22</span><br>
-        კრიტიკული ზონები: <span class="stat-val">9</span>
+        <strong style="color:#ffaa00">GLOBAL MONITOR 2026</strong><hr style="border:0; border-top:1px solid #333">
+        <div class="legend-item"><div class="dot red"></div> აქტიური ომი: <b style="margin-left:5px">56</b></div>
+        <div class="legend-item"><div class="dot orange"></div> ლოკალური შეტაკება: <b style="margin-left:5px">114</b></div>
+        <div class="legend-item"><div class="dot blue"></div> გაყინული კონფლიქტი: <b style="margin-left:5px">22</b></div>
+        <div class="legend-item"><div class="dot purple"></div> კრიტიკული ზონა: <b style="margin-left:5px">9</b></div>
     </div>
 
     <div id="map"></div>
@@ -50,7 +54,7 @@
     <div id="info-panel">
         <h2>🛰️ STRATEGIC CONTROL</h2>
         <div class="clock-grid" id="clocks"></div>
-        <div id="details"><p style="text-align:center; color:#666; font-size: 0.85em;">აირჩიეთ წითელი ან ყვითელი ხაზი</p></div>
+        <div id="details"><p style="text-align:center; color:#666; font-size: 0.85em;">აირჩიეთ ობიექტი რუკაზე დეტალებისთვის</p></div>
         <div id="news-section" class="news-container" style="display:none;"><div id="news-frame-wrapper" style="height:100%;"></div></div>
     </div>
 
@@ -64,38 +68,47 @@
         document.onmousemove = (e) => {
             if (!isResizing) return;
             let w = document.body.offsetWidth - e.clientX;
-            if (w > 250 && w < 900) { panel.style.width = w + "px"; map.invalidateSize(); }
+            if (w > 280 && w < 900) { panel.style.width = w + "px"; map.invalidateSize(); }
         };
         document.onmouseup = () => { isResizing = false; };
 
         function updateClocks() {
-            const zones = [{n:'WASHINGTON', z:'America/New_York'}, {n:'KYIV', z:'Europe/Kyiv'}, {n:'TBILISI', z:'Asia/Tbilisi'}, {n:'BEIJING', z:'Asia/Shanghai'}];
+            const zones = [{n:'D.C.', z:'America/New_York'}, {n:'KYIV', z:'Europe/Kyiv'}, {n:'TBI', z:'Asia/Tbilisi'}, {n:'BJS', z:'Asia/Shanghai'}];
             document.getElementById('clocks').innerHTML = zones.map(z => `<div class="clock-box"><span style="font-size:0.55em;color:#ffaa00">${z.n}</span><div class="clock-time">${new Date().toLocaleTimeString('en-GB',{timeZone:z.z, hour12:false})}</div></div>`).join('');
         }
         setInterval(updateClocks, 1000); updateClocks();
 
-        var map = L.map('map', { zoomControl: true, attributionControl: false }).setView([20, 20], 3);
+        var map = L.map('map', { zoomControl: true, attributionControl: false }).setView([20, 15], 3);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
 
-        // ძირითადი ჰაბები დახმარებისთვის
-        const hubs = { USA:[38.9,-77.0], EU:[50.8,4.3], CHINA:[39.9,116.4], IRAN:[35.7,51.3], RUSSIA:[55.7,37.6], TURKEY:[39.9,32.8], UK:[51.5,-0.1] };
+        const hubs = { USA:[38.9,-77.0], EU:[50.8,4.3], CHINA:[39.9,116.4], IRAN:[35.7,51.3], RUSSIA:[55.7,37.6], TURKEY:[39.9,32.8] };
+
+        // ფერების კონსტანტები
+        const colors = { war: '#ff0000', local: '#ffa500', frozen: '#00ccff', critical: '#cc00ff', aid: '#ffaa00' };
 
         const data = [
-            // ⚔️ კონფლიქტები
-            { f:"რუსეთი", t:"უკრაინა", p:[[55.7,37.6],[50.4,30.5]], q:"Ukraine war frontline news", s:"ომი", c:"ექსპანსია", aid:[{h:"USA",d:"HIMARS/დაზვერვა"},{h:"UK",d:"Storm Shadow"},{h:"EU",d:"საფინანსო"}] },
-            { f:"რუსეთი", t:"საქართველო", p:[[43.5,39.5],[42.3,42.0]], q:"Occupation Georgia live", s:"ოკუპაცია", c:"გეოპოლიტიკური კონტროლი", aid:[{h:"USA",d:"სტრატეგიული თავდაცვა"}] },
-            { f:"ისრაელი", t:"ღაზა/ლიბანი", p:[[31.7,35.2],[33.5,35.4]], q:"Israel Hezbollah war news", s:"ომი", c:"ტერორიზმთან ბრძოლა", aid:[{h:"USA",d:"Iron Dome / THAAD"}] },
-            { f:"ირანი", t:"ისრაელი", p:[[32.6,51.6],[32.0,34.8]], q:"Iran Israel conflict", s:"ესკალაცია", c:"სარაკეტო ომი", aid:[{h:"USA",d:"Aegis სისტემები"}] },
-            { f:"ჩინეთი", t:"ტაივანი", p:[[26.0,119.3],[25.0,121.5]], q:"Taiwan Strait tension", s:"ბლოკადა", c:"სუვერენიტეტის დავა", aid:[{h:"USA",d:"F-16 & ფლოტი"}] },
-            { f:"აზერბაიჯანი", t:"სომხეთი", p:[[40.4,49.8],[40.1,44.5]], q:"Armenia Azerbaijan news", s:"დაძაბულობა", c:"დერეფნის დავა", aid:[{h:"TURKEY",d:"დრონები და წვრთნები"}] },
-            { f:"იემენი", t:"წითელი ზღვა", p:[[15.3,44.2],[15.5,41.5]], q:"Houthi Red Sea attack", s:"ბლოკადა", c:"ვაჭრობის შეფერხება", aid:[{h:"IRAN",d:"ბალისტიკური რაკეტები"}] },
-            { f:"ჩრდ. კორეა", t:"სამხ. კორეა", p:[[39.0,125.7],[37.5,127.0]], q:"Korea tension DMZ", s:"მზადყოფნა", c:"ბირთვული საფრთხე", aid:[{h:"USA",d:"ბირთვული შეკავება"}] },
-            { f:"სუდანი", t:"შიდა ომი", p:[[15.5,32.5],[12.0,24.0]], q:"Sudan civil war news", s:"ომი", c:"ძალაუფლების ომი", aid:[{h:"RUSSIA",d:"ლოგისტიკა (ვაგნერი)"}] },
-            { f:"ვენესუელა", t:"გაიანა", p:[[7.5,-66.5],[6.8,-59.5]], q:"Essequibo Guyana news", s:"დავა", c:"ნავთობის ანექსია", aid:[{h:"USA",d:"სამხრეთის სარდლობა"}] },
-            { f:"სერბეთი", t:"კოსოვო", p:[[44.8,20.4],[42.6,21.1]], q:"Kosovo Serbia news", s:"კრიზისი", c:"ეთნიკური დავა", aid:[{h:"EU",d:"KFOR მისია"}] },
-            { f:"ეთიოპია", t:"სომალი", p:[[9.0,38.7],[2.0,45.3]], q:"Ethiopia Somalia tension", s:"დავა", c:"საზღვაო კრიზისი", aid:[{h:"TURKEY",d:"საზღვაო დაცვა"}] },
-            { f:"ხუნტა", t:"მიანმარი", p:[[19.7,96.1],[22.0,96.0]], q:"Myanmar civil war news", s:"ომი", c:"შიდა წინააღმდეგობა", aid:[{h:"CHINA",d:"პოლიტიკური ზურგი"}] },
-            { f:"ინდოეთი", t:"პაკისტანი", p:[[28.6,77.2],[33.6,73.0]], q:"Kashmir conflict news", s:"გაყინული", c:"კაშმირის დავა", aid:[{h:"RUSSIA",d:"S-400 სისტემები"}] }
+            // 🔴 აქტიური ომები (Active Wars)
+            { type:'war', f:"რუსეთი", t:"უკრაინა", p:[[55.7,37.6],[50.4,30.5]], q:"Ukraine war frontline", c:"სრულმასშტაბიანი ექსპანსია", aid:[{h:"USA",d:"ATACMS/დაზვერვა"}] },
+            { type:'war', f:"ისრაელი", t:"ღაზა/ლიბანი", p:[[31.7,35.2],[33.8,35.5]], q:"Israel Lebanon war", c:"ომი ჰეზბოლასთან და ჰამასთან", aid:[{h:"USA",d:"საჰაერო თავდაცვა"}] },
+            { type:'war', f:"სუდანი", t:"RSF/SAF", p:[[15.5,32.5],[12.5,25.0]], q:"Sudan civil war news", c:"სამოქალაქო ომი რესურსებისთვის", aid:[{h:"RUSSIA",d:"ვაგნერის ლოგისტიკა"}] },
+            { type:'war', f:"მიანმარი", t:"ხუნტა/აჯანყებულები", p:[[19.7,96.1],[22.0,95.0]], q:"Myanmar civil war news", c:"შიდა შეიარაღებული კონფლიქტი", aid:[{h:"CHINA",d:"პოლიტიკური მხარდაჭერა"}] },
+            
+            // 🔵 გაყინული კონფლიქტები (Frozen)
+            { type:'frozen', f:"რუსეთი", t:"საქართველო", p:[[43.5,39.5],[42.2,42.5]], q:"Abkhazia South Ossetia news", c:"ოკუპირებული ტერიტორიები (20%)", aid:[{h:"USA",d:"სუვერენიტეტის მხარდაჭერა"}] },
+            { type:'frozen', f:"მოლდოვა", t:"დნესტრისპირეთი", p:[[47.0,28.8],[46.8,29.6]], q:"Transnistria conflict news", s:"გაყინული", c:"რუსული სამხედრო ყოფნა", aid:[{h:"EU",d:"ევროინტეგრაციის მხარდაჭერა"}] },
+            { type:'frozen', f:"კვიპროსი", t:"ჩრდ. კვიპროსი", p:[[35.1,33.3],[35.3,33.5]], q:"Cyprus partition news", c:"გაყოფილი კუნძული და ბუფერული ზონა", aid:[{h:"TURKEY",d:"სამხედრო გარანტორი"}] },
+            { type:'frozen', f:"სამხ. კორეა", t:"ჩრდ. კორეა", p:[[37.5,127.0],[39.0,125.7]], q:"North Korea nuclear news", c:"ბირთვული საფრთხე და DMZ", aid:[{h:"USA",d:"ბირთვული ქოლგა"}] },
+
+            // 🟠 ლოკალური შეტაკებები (Local Clashes)
+            { type:'local', f:"აზერბაიჯანი", t:"სომხეთი", p:[[40.4,49.8],[40.1,44.5]], q:"Armenia Azerbaijan border news", c:"სასაზღვრო შეტაკებები და დერეფანი", aid:[{h:"TURKEY",d:"სამხედრო დახმარება"}] },
+            { type:'local', f:"იემენი", t:"წითელი ზღვა", p:[[15.3,44.2],[16.0,41.5]], q:"Houthi Red Sea news", c:"საზღვაო თავდასხმები", aid:[{h:"IRAN",d:"სარაკეტო ტექნოლოგია"}] },
+            { type:'local', f:"სერბეთი", t:"კოსოვო", p:[[44.8,20.4],[42.6,21.1]], q:"Kosovo North tension", c:"ეთნიკური დაპირისპირება ჩრდილოეთში", aid:[{h:"EU",d:"KFOR სამშვიდობოები"}] },
+            { type:'local', f:"ინდოეთი", t:"პაკისტანი", p:[[28.6,77.2],[34.0,74.0]], q:"Kashmir border news", c:"კონტროლის ხაზი (LoC) კაშმირში", aid:[{h:"RUSSIA",d:"S-400 სისტემები"}] },
+
+            // 🟣 კრიტიკული ზონები (Critical/Threat)
+            { type:'critical', f:"ჩინეთი", t:"ტაივანი", p:[[26.0,119.3],[24.0,121.0]], q:"Taiwan invasion threat", c:"მოსალოდნელი სამხედრო ინტერვენცია", aid:[{h:"USA",d:"AUKUS დახმარება"}] },
+            { type:'critical', f:"ვენესუელა", t:"გაიანა", p:[[7.5,-66.5],[6.8,-59.5]], q:"Guyana Essequibo tension", c:"ტერიტორიის ანექსიის საფრთხე", aid:[{h:"USA",d:"წვრთნები და დაზვერვა"}] },
+            { type:'critical', f:"ეთიოპია", t:"სომალი", p:[[9.0,38.7],[2.0,45.3]], q:"Ethiopia Somaliland news", c:"საომარი საფრთხე საზღვაო გასასვლელზე", aid:[{h:"TURKEY",d:"საზღვაო პაქტი"}] }
         ];
 
         function loadNews(q) {
@@ -104,46 +117,54 @@
         }
 
         data.forEach(conf => {
-            // 🔴 კონფლიქტის ხაზი
-            const warLine = L.polyline(conf.p, { color:'#ff0000', weight:3, opacity:0.8, className:'flow-line' }).addTo(map);
-            const warHit = L.polyline(conf.p, { color:'transparent', weight:45, interactive: true }).addTo(map);
+            const color = colors[conf.type];
+            
+            // მთავარი ხაზი
+            L.polyline(conf.p, { color: color, weight: 3, opacity: 0.8, className: 'flow-line' }).addTo(map);
+            
+            // Hitbox (45px)
+            const hit = L.polyline(conf.p, { color: 'transparent', weight: 45, interactive: true }).addTo(map);
 
-            const showWar = () => {
-                document.getElementById('details').innerHTML = `<div class="strike-card">
-                    <div style="font-size:0.7em; color:#ff4444; font-weight:bold;">${conf.s}</div>
-                    <h3 style="color:#fff; margin:5px 0;">${conf.f} ➔ ${conf.t}</h3>
-                    <p style="color:#aaa; font-size:0.85em;">${conf.c}</p>
-                </div>`;
+            const showInfo = () => {
+                const typeText = { war:'აქტიური ომი', local:'ლოკალური შეტაკება', frozen:'გაყინული კონფლიქტი', critical:'კრიტიკული ზონა' };
+                document.getElementById('details').innerHTML = `
+                    <div class="strike-card" style="border-left-color:${color}">
+                        <div style="font-size:0.7em; color:${color}; font-weight:bold; text-transform:uppercase;">${typeText[conf.type]}</div>
+                        <h3 style="color:#fff; margin:5px 0;">${conf.f} ➔ ${conf.t}</h3>
+                        <p style="color:#aaa; font-size:0.85em;">${conf.c}</p>
+                    </div>`;
                 loadNews(conf.q);
             };
-            warHit.on('click', showWar);
+            hit.on('click', showInfo);
 
-            // 🟡 დახმარების ხაზები
+            // მხარდაჭერის ხაზები (ყვითელი)
             if(conf.aid) {
                 conf.aid.forEach(a => {
-                    const aidLine = L.polyline([hubs[a.h], conf.p[1]], { color:'#ffaa00', weight:2, opacity:0.6, className:'aid-line' }).addTo(map);
-                    const aidHit = L.polyline([hubs[a.h], conf.p[1]], { color:'transparent', weight:45, interactive: true }).addTo(map);
-                    
-                    aidHit.on('click', (e) => {
+                    const aidL = L.polyline([hubs[a.h], conf.p[1]], { color: colors.aid, weight: 2, className:'aid-line' }).addTo(map);
+                    const aidH = L.polyline([hubs[a.h], conf.p[1]], { color:'transparent', weight:45, interactive:true }).addTo(map);
+                    aidH.on('click', (e) => {
                         L.DomEvent.stopPropagation(e);
-                        document.getElementById('details').innerHTML = `<div class="strike-card aid-card">
-                            <div style="font-size:0.7em; color:#ffaa00; font-weight:bold;">გლობალური მხარდაჭერა</div>
-                            <h3 style="color:#ffaa00; margin:5px 0;">${a.h} ➔ ${conf.t}</h3>
-                            <p style="color:#ccc; font-size:0.85em;">რესურსი: ${a.d}</p>
-                        </div>`;
-                        loadNews(a.h + " military support " + conf.t);
+                        document.getElementById('details').innerHTML = `
+                            <div class="strike-card" style="border-left-color:${colors.aid}">
+                                <div style="font-size:0.7em; color:${colors.aid}; font-weight:bold;">მხარდაჭერა</div>
+                                <h3 style="color:#fff; margin:5px 0;">${a.h} ➔ ${conf.t}</h3>
+                                <p style="color:#ccc; font-size:0.85em;">რესურსი: ${a.d}</p>
+                            </div>`;
+                        loadNews(a.h + " support " + conf.t);
                     });
                 });
             }
 
-            const dot = L.marker(conf.p[1], { icon: L.divIcon({ className:'war-pulse', iconSize:[14,14] }) }).addTo(map);
-            dot.on('click', showWar);
-            L.marker(conf.p[0], { icon: L.divIcon({ className:'label-style', html: conf.f }) }).addTo(map);
+            // წერტილები
+            const markerClass = conf.type === 'war' ? 'red pulse-red' : (conf.type === 'local' ? 'orange' : (conf.type === 'frozen' ? 'blue' : 'purple'));
+            const marker = L.marker(conf.p[1], { 
+                icon: L.divIcon({ className: `dot ${markerClass}`, iconSize:[12,12] }) 
+            }).addTo(map);
+            marker.on('click', showInfo);
         });
 
-        // ჰაბების წერტილები
         Object.keys(hubs).forEach(h => {
-            L.marker(hubs[h], { icon: L.divIcon({ className:'label-style', html:'★ '+h, style:'color:#ffaa00; border-color:#ffaa00' }) }).addTo(map);
+            L.marker(hubs[h], { icon: L.divIcon({ className:'label-style', html:'★ '+h, style:'color:#ffaa00' }) }).addTo(map);
         });
     </script>
 </body>
